@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
@@ -39,6 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import to.msn.wings.musicappui.MainViewModel
 import to.msn.wings.musicappui.Screen
+import to.msn.wings.musicappui.screensInBottom
 import to.msn.wings.musicappui.screensInDrawer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +69,28 @@ fun MainView() {
         mutableStateOf(currentScreen.title)
     }
 
+    val bottomBar: @Composable () -> Unit = {
+        if (currentScreen is Screen.DrawerScreen || currentScreen == Screen.BottomScreen.Home) {
+            BottomNavigation(Modifier.wrapContentSize()) {
+                screensInBottom.forEach{
+                    item ->
+                    BottomNavigationItem(
+                        selected = currentRoute == item.bRoute,
+                        onClick = { controller.navigate(item.bRoute) },
+                        icon = {
+                            Icon(painter =  painterResource(id = item.icon), contentDescription = item.bTitle)
+                        },
+                        label = { Text(text = item.bTitle)},
+                        selectedContentColor = Color.White,
+                        unselectedContentColor = Color.Black
+                    )
+                }
+            }
+        }
+    }
+
     Scaffold(
+        bottomBar = bottomBar,
         topBar = {
             TopAppBar(title = { Text(title.value) },
                 navigationIcon = { IconButton(onClick = {
@@ -113,8 +138,10 @@ fun DrawerItem(
 ) {
     val background = if(selected) Color.DarkGray else Color.White
     Row(
-        modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 16.dp).background(background)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 16.dp)
+            .background(background)
             .clickable {
                 onDrawerItemClicked()
             }) {
