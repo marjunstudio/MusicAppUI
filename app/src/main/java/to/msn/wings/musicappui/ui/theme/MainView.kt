@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
@@ -45,7 +46,7 @@ import to.msn.wings.musicappui.Screen
 import to.msn.wings.musicappui.screensInBottom
 import to.msn.wings.musicappui.screensInDrawer
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainView() {
 
@@ -74,13 +75,16 @@ fun MainView() {
             BottomNavigation(Modifier.wrapContentSize()) {
                 screensInBottom.forEach{
                     item ->
+                    val isSelected = currentRoute == item.bRoute
+                    val tint = if (isSelected)Color.White else Color.Black
                     BottomNavigationItem(
                         selected = currentRoute == item.bRoute,
-                        onClick = { controller.navigate(item.bRoute) },
-                        icon = {
-                            Icon(painter =  painterResource(id = item.icon), contentDescription = item.bTitle)
+                        onClick = { controller.navigate(item.bRoute)
                         },
-                        label = { Text(text = item.bTitle)},
+                        icon = {
+                            Icon(tint = tint, painter =  painterResource(id = item.icon), contentDescription = item.bTitle)
+                        },
+                        label = { Text(text = item.bTitle, color = tint)},
                         selectedContentColor = Color.White,
                         unselectedContentColor = Color.Black
                     )
